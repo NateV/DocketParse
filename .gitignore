@@ -1,0 +1,8 @@
+testDocs/**
+pdfDockets/*
+__pycache__/*
+**/*.pyc
+*.pdf
+**/*.swp
+*.xml
+*.txt
