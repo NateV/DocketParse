@@ -9,11 +9,11 @@ class TestDefendantInfoSectionParse:
   def setup_method(self, method):
     self.docket = self.docket_to_test = "CP-51-CR-0000001-2011"
     self.birth_date = "07/24/1964"
-    path = "./testDocs/testPDFs/%s.pdf" % self.docket_to_test
+    path = "tests/testDocs/testPDFs/%s.pdf" % self.docket_to_test
     text = sectionize.parse(path)
     sections = etree.XML(sectionize.stitch(text))
     self.section_text = sections.xpath("//section[@name='Defendant_Information']")[0].text.strip()
-    with open("./testDocs/defendantSectionTexts/%s.txt" % self.docket_to_test, "w+") as f:
+    with open("tests/testDocs/defendantSectionTexts/%s.txt" % self.docket_to_test, "w+") as f:
       f.write(self.section_text)
     f.close()
 
@@ -24,7 +24,7 @@ class TestDefendantInfoSectionParse:
     section_root = etree.parse(file_object, parser).getroot()
 
     #save parsed xml
-    with open("./testDocs/defendantSectionTexts/section_%s.xml" % self.docket_to_test, "w+") as f:
+    with open("tests/testDocs/defendantSectionTexts/section_%s.xml" % self.docket_to_test, "w+") as f:
       f.write(etree.tounicode(section_root, pretty_print=True))
     f.close()
 

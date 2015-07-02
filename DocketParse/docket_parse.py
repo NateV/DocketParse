@@ -1,8 +1,8 @@
-import DocketParse.sectionize
+from DocketParse import sectionize
 # import defendant_info_section_parse
 # import disposition_section_parse
 import pytest
-import DocketParse.grammar_modules
+from DocketParse import grammar_modules
 
 import importlib
 from lxml import etree
@@ -42,7 +42,8 @@ def save_file(dest, file_name_format, docket_name, text):
                 docket_name_from_path(docket_pdf),
                 paginated_text)
   """
-  #print("Saving %s" % dest + (file_name_format % docket_name))
+  #print("save file.")
+  #print("Saving %s" % dest + (file_name_format.format(docket_name)))
   with open(dest + (file_name_format.format(docket_name)), "w+") as f:
     f.write(text)
   f.close()
@@ -55,8 +56,8 @@ def log_successes_and_failures(successes_and_failures, which_method):
 | {0} | {1} | {2} |
 """.format(successes_and_failures["successes"],
            successes_and_failures["dockets"] - successes_and_failures["successes"],
-           successes_and_failures["dockets"]),
-           which_method)
+           successes_and_failures["dockets"],
+           which_method))
   logging.info("    Success ratio: **{}**\n".format(successes_and_failures["successes"]/successes_and_failures["dockets"]))
 
 def pdf_directory_to_stitched_xml(directory, destination):
@@ -86,7 +87,7 @@ def pdf_directory_to_stitched_xml(directory, destination):
       #
       try:
         stitched = sectionize.stitch(paginated).decode('utf-8').replace("&","&amp;")
-        save_file(destination, "%s_stitched.xml",docket_name_from_path(docket_pdf), stitched)
+        save_file(destination, "{}_stitched.xml",docket_name_from_path(docket_pdf), stitched)
         successes_and_failures["successes"] += 1
       except:
         logging.warning("Sectionize.stitch failed for %s" % docket_name_from_path(docket_pdf))
@@ -130,7 +131,7 @@ def stitched_xml_to_complete_xml(directory, destination, section_grammars):
     #II. Parse each section that needs to be parsed.
     try:
       for section_grammar in section_grammars:
-        __import__("grammar_modules." + section_grammar["module_name"])
+        __import__("DocketParse.grammar_modules." + section_grammar["module_name"])
         module = getattr(grammar_modules, section_grammar["module_name"])
 
         try:
@@ -170,6 +171,6 @@ def stitched_xml_to_complete_xml(directory, destination, section_grammars):
       #III. Save the complete file.
       output_text = etree.tostring(stitched_etree, pretty_print=True)
       os.remove(stitched_xml_file)
-      save_file(destination, "%s_complete.xml", docket_name_from_path(stitched_xml_file), output_text.decode('utf-8'))
+      save_file(destination, "{}_complete.xml", docket_name_from_path(stitched_xml_file), output_text.decode('utf-8'))
   log_successes_and_failures(successes_and_failures, "stitched_sections2complete_xml")
   return successes_and_failures

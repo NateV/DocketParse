@@ -1,16 +1,16 @@
-import docket_parse
+from DocketParse import docket_parse
 import os
 import pytest
 import logging
 
 class TestDocketParse:
 
-  @pytest.mark.order3
+  @pytest.mark.order1
   def test_logging_setup(self):
-    logger_file = "./testDocs/test_one/docket_parse_test.md"
+    logger_file = "tests/testDocs/try_docket_parse/docket_parse_test.md"
     if os.path.exists(logger_file):
       os.remove(logger_file)
-    docket_parse.start_logger("./testDocs/test_one/docket_parse_test.md")
+    docket_parse.start_logger("tests/testDocs/try_docket_parse/docket_parse_test.md")
 
 
   @pytest.mark.order2
@@ -20,8 +20,8 @@ class TestDocketParse:
     Testing pdf_directory_to_stitched_xml
     ===========================
     """)
-    directory = "./testDocs/test_one/pdfs/"
-    destination = "./testDocs/test_one/stitched/"
+    directory = "tests/testDocs/try_docket_parse/pdfs/"
+    destination = "tests/testDocs/try_docket_parse/stitched/"
     results = docket_parse.pdf_directory_to_stitched_xml(directory, destination)
     assert results["dockets"] == results["successes"]
     assert len(os.listdir(destination)) == results["dockets"] + 1 #.DS_Store is in there too.
@@ -34,8 +34,8 @@ class TestDocketParse:
     Testing stitched_xml_to_complete_xml
     ===========================
     """)
-    directory = "./testDocs/test_one/stitched/"
-    destination = "./testDocs/test_one/complete/"
+    directory = "tests/testDocs/try_docket_parse/stitched/"
+    destination = "tests/testDocs/try_docket_parse/complete/"
     grammar_modules = [{"section_name": "Defendant_Information",
                         "module_name": "defendant_info_section_parse"},
                         {"section_name": "Disposition_Sentencing_Penalties",
