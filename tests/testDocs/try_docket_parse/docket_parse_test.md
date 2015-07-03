@@ -5,13 +5,13 @@ INFO:root:
     
 INFO:root:  *Parsing CP-51-CR-0000029-2011*
 
-INFO:root:28649, 55340, 524985, 142753
+INFO:root:36126, 50123, 572303, 176778
 INFO:root:  *Parsing CP-51-CR-0000030-2011*
 
-INFO:root:32595, 36674, 721819, 205214
+INFO:root:116107, 42543, 894917, 266873
 INFO:root:  *Parsing CP-51-CR-0000031-2011*
 
-INFO:root:82353, 40291, 501610, 149016
+INFO:root:39860, 57031, 607456, 190158
 INFO:root:
 ##Successes and failures for pdf2stitched:
 | Successes | Failures | Total |

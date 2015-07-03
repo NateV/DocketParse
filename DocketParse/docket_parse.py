@@ -9,6 +9,7 @@ from lxml import etree
 import os
 import glob
 import logging
+from io import BytesIO
 
 def start_logger(file_name, custom_level=logging.DEBUG):
   """
@@ -42,11 +43,15 @@ def save_file(dest, file_name_format, docket_name, text):
                 docket_name_from_path(docket_pdf),
                 paginated_text)
   """
-  #print("save file.")
-  #print("Saving %s" % dest + (file_name_format.format(docket_name)))
-  with open(dest + (file_name_format.format(docket_name)), "w+") as f:
-    f.write(text)
-  f.close()
+  print("Saving {}".format(dest + (file_name_format.format(docket_name))))
+  try:
+    with open(dest + (file_name_format.format(docket_name)), "w+", encoding="utf-8") as f:
+      f.write(text)
+    f.close()
+    print("File saved.")
+  except Exception as e:
+    print("File save error")
+    print(e)
 
 def log_successes_and_failures(successes_and_failures, which_method):
   logging.info("""
@@ -83,15 +88,18 @@ def pdf_directory_to_stitched_xml(directory, destination):
                                                # the original pdf.
       #  Commented because I don't want to save all of them.  But
       #  it could be useful to turn back on for debugging at some point.
-      #save_file("%s../sectionized_texts/" % destination, "%s_paginated.xml",docket_name_from_path(docket_pdf), paginated)
+      #save_file("{}sectionized_texts/".format(destination), "{}_paginated.xml",docket_name_from_path(docket_pdf), paginated)
       #
       try:
-        stitched = sectionize.stitch(paginated).decode('utf-8').replace("&","&amp;")
+        stitched = sectionize.stitch(paginated)
+        #stitched = sectionize.stitch(paginated).decode('utf-8').replace("&","&amp;") #<- This is where I lose the section symbols.
         save_file(destination, "{}_stitched.xml",docket_name_from_path(docket_pdf), stitched)
         successes_and_failures["successes"] += 1
-      except:
+      except Exception as e:
         logging.warning("Sectionize.stitch failed for %s" % docket_name_from_path(docket_pdf))
-        save_file("%s../sectionized_texts/" % destination, "%s_paginated.xml",docket_name_from_path(docket_pdf), paginated)
+        print("Sectionize.stitch failed for %s" % docket_name_from_path(docket_pdf))
+        print(e)
+        save_file("{}sectionized_texts/".format(destination), "{}_paginated.xml",docket_name_from_path(docket_pdf), paginated)
     except:
       logging.warning("Sectionize.parse failed for %s" % docket_name_from_path(docket_pdf))
   log_successes_and_failures(successes_and_failures, "pdf2stitched")
@@ -169,8 +177,11 @@ def stitched_xml_to_complete_xml(directory, destination, section_grammars):
     else:
       successes_and_failures["successes"] += 1
       #III. Save the complete file.
-      output_text = etree.tostring(stitched_etree, pretty_print=True)
-      os.remove(stitched_xml_file)
-      save_file(destination, "{}_complete.xml", docket_name_from_path(stitched_xml_file), output_text.decode('utf-8'))
+      outbytes = BytesIO()
+      stitched_etree.write(outbytes, encoding='UTF-8')
+      save_file(destination, "{}_complete.xml", docket_name_from_path(stitched_xml_file), outbytes.getvalue().decode('utf-8'))
+      os.remove(stitched_xml_file) # Remove the stitched xml file here because
+                                   # completely parsing its sections was
+                                   # successful.
   log_successes_and_failures(successes_and_failures, "stitched_sections2complete_xml")
   return successes_and_failures

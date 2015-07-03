@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import lxml.etree as etree
+from io import BytesIO
 from parsimonious import Grammar
 from parsimonious import NodeVisitor
 import os
 from datetime import datetime
 import logging
+
+import pytest
 
 # #SCHEMA
 # schema = StringIO('''\
@@ -588,7 +591,11 @@ def stitch(xml_text):
 
   [stitched_xml.append(section_node)  for section_node in combined_sections]
 
-  return etree.tostring(stitched_xml, pretty_print=True)
+  docket_tree = etree.ElementTree(stitched_xml)
+  bytes = BytesIO()
+  docket_tree.write(bytes, encoding='utf-8')
+  return bytes.getvalue().decode('utf-8')
+  #return etree.tostring(stitched_xml, pretty_print=True)
 
 
 #Helper functions
