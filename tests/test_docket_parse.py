@@ -38,8 +38,10 @@ class TestDocketParse:
     destination = "tests/testDocs/try_docket_parse/complete/"
     grammar_modules = [{"section_name": "Defendant_Information",
                         "module_name": "defendant_info_section_parse"},
-                        {"section_name": "Disposition_Sentencing_Penalties",
-                         "module_name": "disposition_section_parse"}]
+                       {"section_name": "Disposition_Sentencing_Penalties",
+                        "module_name": "disposition_section_parse"},
+                       {"section_name": "Case_Information",
+                        "module_name": "case_info_grammar"}]
     results = docket_parse.stitched_xml_to_complete_xml(directory, destination, grammar_modules)
     assert results["dockets"] == results["successes"]
     assert len(os.listdir(destination)) == results["dockets"] + 1 #.DS_Store is in there too.

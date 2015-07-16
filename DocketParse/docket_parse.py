@@ -91,7 +91,7 @@ def pdf_directory_to_stitched_xml(directory, destination):
       #save_file("{}sectionized_texts/".format(destination), "{}_paginated.xml",docket_name_from_path(docket_pdf), paginated)
       #
       try:
-        stitched = sectionize.stitch(paginated)
+        stitched = sectionize.stitch(paginated).replace("&","&amp;")
         #stitched = sectionize.stitch(paginated).decode('utf-8').replace("&","&amp;") #<- This is where I lose the section symbols.
         save_file(destination, "{}_stitched.xml",docket_name_from_path(docket_pdf), stitched)
         successes_and_failures["successes"] += 1
