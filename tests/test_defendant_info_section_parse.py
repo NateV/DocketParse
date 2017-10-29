@@ -1,7 +1,7 @@
 from lxml import etree
 import io
-import sectionize
-import defendant_info_section_parse
+import DocketParse.sectionize as sectionize 
+import DocketParse.grammar_modules.defendant_info_section_parse as defendant_info_section_parse
 
 
 class TestDefendantInfoSectionParse:

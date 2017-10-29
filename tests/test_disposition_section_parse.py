@@ -1,5 +1,5 @@
-import sectionize
-from grammar_modules import disposition_section_parse
+import DocketParse.sectionize as sectionize
+from DocketParse.grammar_modules import disposition_section_parse
 from lxml import etree
 import re
 import pytest
